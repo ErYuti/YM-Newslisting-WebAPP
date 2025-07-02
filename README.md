@@ -1,12 +1,32 @@
-# React + Vite
+# 📰 React News Listing Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive and dynamic news listing web application built with **React**. It fetches real-time news articles using a public API and displays them with category filters, search functionality, and clean UI/UX.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🔍 Search news by keyword
+- 🗂 Filter news by category (e.g., business, sports, technology)
+- 📱 Fully responsive UI for mobile and desktop
+- ⚡ Fast and lightweight with Axios and React Hooks
+- 📅 Displays latest headlines with publish time and source
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠 Tech Stack
+
+- React (with functional components & hooks)
+- Fetch API calls
+- CSS Modules / TailwindCSS
+- Search news by keyword (query)
+- [NewsAPI.org](https://newsapi.org) (or any public news API)
+
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/yourusername/react-news-app.git
+cd react-news-app
+npm install
