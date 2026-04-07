@@ -7,13 +7,12 @@ const NewsSideBar = () => {
     useEffect(() => {
         const fetchTrending = async () => {
             const CACHE_KEY = 'ym-trending-cache';
-            const CACHE_TIME = 30 * 60 * 1000; // 30 Minutes
-
-            // 1. Check Cache first
             const cached = localStorage.getItem(CACHE_KEY);
+
+            // Check Cache (30 Minutes)
             if (cached) {
                 const { timestamp, articles } = JSON.parse(cached);
-                if (Date.now() - timestamp < CACHE_TIME) {
+                if (Date.now() - timestamp < 30 * 60 * 1000) {
                     setTop(articles);
                     return;
                 }
@@ -22,34 +21,32 @@ const NewsSideBar = () => {
             try {
                 const key = import.meta.env.VITE_API_KEY;
                 const baseUrl = import.meta.env.VITE_API_URL;
-                const url = `${baseUrl}/top-headlines?category=general&lang=en&max=5&apikey=${key}`;
+                const PROXY = "https://corsproxy.io/?";
+                const endpoint = `${baseUrl}/top-headlines?category=general&lang=en&max=5&apikey=${key}`;
 
-                const response = await fetch(url);
+                const response = await fetch(PROXY + encodeURIComponent(endpoint));
                 const data = await response.json();
 
                 if (data.articles) {
                     setTop(data.articles);
-                    // 2. Save to Cache
                     localStorage.setItem(CACHE_KEY, JSON.stringify({
                         timestamp: Date.now(),
                         articles: data.articles
                     }));
-                } else if (data.errors) {
-                    console.warn("API Limit reached, using old cache if available.");
                 }
             } catch (err) {
-                console.error("Sidebar Fetch Error:", err);
+                console.error("Sidebar Error:", err);
             }
         };
 
         fetchTrending();
     }, []);
 
-    // Static Fallback data so the UI never looks empty even if API fails
-    const displayItems = top.length > 0 ? top : [
-        { title: "Global markets react to new economic shifts", source: { name: "Economics" }, url: "#" },
-        { title: "New breakthroughs in sustainable energy reported", source: { name: "Science" }, url: "#" },
-        { title: "Major tech event reveals next-gen AI tools", source: { name: "TechCrunch" }, url: "#" }
+    // Fallback data in case of API Error or Limit (100 limit reached)
+    const displayData = top.length > 0 ? top : [
+        { title: "Global market trends shifting in new quarter", source: { name: "Bloomberg" }, url: "#" },
+        { title: "Advancements in AI reaching new milestones", source: { name: "TechWire" }, url: "#" },
+        { title: "Renewable energy projects gain massive funding", source: { name: "Nature" }, url: "#" }
     ];
 
     return (
@@ -65,10 +62,10 @@ const NewsSideBar = () => {
             </div>
             
             <div className="space-y-8">
-                {displayItems.map((item, idx) => (
+                {displayData.map((item, idx) => (
                     <div key={idx} className="group cursor-pointer" onClick={() => item.url !== "#" && window.open(item.url, '_blank')}>
                         <div className="flex items-start gap-4">
-                            <span className="text-4xl font-black text-slate-200 dark:text-slate-800 group-hover:text-brand/30 transition-colors">0{idx + 1}</span>
+                            <span className="text-4xl font-black text-slate-200 dark:text-slate-800 group-hover:text-brand/30 transition-colors shrink-0">0{idx + 1}</span>
                             <div>
                                 <h4 className="text-sm font-bold text-text-main line-clamp-2 leading-snug group-hover:text-brand transition-colors mb-2">
                                     {item.title}
