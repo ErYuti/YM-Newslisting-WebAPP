@@ -1,1 +1,56 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand: #ef4444;
+  --color-surface: var(--bg-surface);
+  --color-glass: var(--glass-bg);
+  --color-border-thin: var(--glass-border);
+  --color-text-main: var(--text-primary);
+  --color-text-sub: var(--text-secondary);
+}
+
+:root {
+  --bg-surface: #f8fafc;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --text-primary: #0f172a; /* Dark text for light mode */
+  --text-secondary: #64748b;
+  color-scheme: light;
+}
+
+.dark {
+  --bg-surface: #020617;
+  --glass-bg: rgba(15, 23, 42, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc; /* White text for dark mode */
+  --text-secondary: #94a3b8;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer-bg {
+  background: linear-gradient(90deg, 
+    var(--glass-border) 25%, 
+    rgba(239, 68, 68, 0.1) 50%, 
+    var(--glass-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.glass-panel {
+  @apply backdrop-blur-xl bg-glass border border-border-thin shadow-2xl transition-all duration-300;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }

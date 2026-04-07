@@ -1,37 +1,28 @@
 import React, { useState } from 'react';
+import { IoSearch } from "react-icons/io5";
 
 const SearchBar = ({ onSearch }) => {
-    const [query, setQuery] = useState('');
+    const [val, setVal] = useState("");
 
-    const handleInputChange = (event) => {
-        setQuery(event.target.value);
-    };
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        if (query.trim() !== '') {
-            onSearch(query);
-        }
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSearch(val);
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit} className="sm:flex sm:items-center">
-                <input
-                    className="w-full text-black rounded-md border border-gray-300 bg-white py-2 pl-3 pr-3 leading-5 placeholder-gray-500 focus:border-red-500 focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-red-500 sm:text-sm"
-                    type="text"
-                    placeholder="Search for news..."
-                    value={query}
-                    onChange={handleInputChange}
-                />
-                <button
-                    type="submit"
-                    className="mt-3 sm:mt-0 sm:ml-3 w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                >
-                    Search
-                </button>
-            </form>
-        </div>
+        <form onSubmit={handleSubmit} className="relative w-full group">
+            <IoSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-text-sub group-focus-within:text-brand transition-colors text-xl" />
+            <input 
+                type="text"
+                value={val}
+                onChange={(e) => setVal(e.target.value)}
+                placeholder="Search global news..."
+                className="w-full bg-white/5 dark:bg-black/20 border border-border-thin py-4 pl-12 pr-24 rounded-2xl outline-none focus:ring-2 focus:ring-brand/50 text-text-main placeholder:text-text-sub font-medium transition-all"
+            />
+            <button type="submit" className="absolute right-2 top-2 bottom-2 bg-brand text-white px-6 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 cursor-pointer">
+                Search
+            </button>
+        </form>
     );
 };
 
