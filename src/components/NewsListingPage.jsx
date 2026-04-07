@@ -21,36 +21,25 @@ const NewsListingPage = () => {
 
   const getNews = useCallback(async () => {
     if (viewSaved) return;
-    
-    // Caching for Performance
-    const CACHE_KEY = `news-${category}-${query}-${page}`;
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-        const { timestamp, articles } = JSON.parse(cached);
-        if (Date.now() - timestamp < 15 * 60 * 1000) {
-            setNews(articles);
-            return;
-        }
-    }
-
     setLoading(true);
     try {
       const key = import.meta.env.VITE_API_KEY;
-      const baseUrl = import.meta.env.VITE_API_URL;
+      const baseUrl = import.meta.env.VITE_API_URL; // This must be https://gnews.io/api/v4
+      
+      // Use GNews structure
       const url = query 
-        ? `${baseUrl}/search?q=${query}&lang=en&page=${page}&max=12&apikey=${key}`
-        : `${baseUrl}/top-headlines?category=${category}&lang=en&page=${page}&max=12&apikey=${key}`;
+        ? `${baseUrl}/search?q=${query}&lang=en&max=20&apikey=${key}`
+        : `${baseUrl}/top-headlines?category=${category}&lang=en&max=12&apikey=${key}`;
       
       const res = await fetch(url);
       const data = await res.json();
-      if (data.articles) {
-        setNews(data.articles);
-        localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), articles: data.articles }));
-      }
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-  }, [category, query, page, viewSaved]);
-
+      setNews(data.articles || []);
+    } catch (e) { 
+        console.error("Fetch Error:", e); 
+    } finally { 
+        setLoading(false); 
+    }
+}, [category, query, page, viewSaved]);
   useEffect(() => { getNews(); }, [getNews]);
 
   const handleBookmark = (article) => {

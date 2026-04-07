@@ -4,46 +4,24 @@ import { HiFire } from "react-icons/hi2";
 const NewsSideBar = () => {
     const [top, setTop] = useState([]);
 
-    useEffect(() => {
-        const fetchTrending = async () => {
-            const CACHE_KEY = 'ym-trending-cache';
-            const CACHE_TIME = 30 * 60 * 1000; // 30 Minutes
+useEffect(() => {
+    const fetchTrending = async () => {
+        const key = import.meta.env.VITE_API_KEY;
+        const baseUrl = import.meta.env.VITE_API_URL; // Ensure this is GNews
+        
+        // Correct GNews URL
+        const url = `${baseUrl}/top-headlines?category=general&lang=en&max=5&apikey=${key}`;
 
-            // 1. Check Cache first
-            const cached = localStorage.getItem(CACHE_KEY);
-            if (cached) {
-                const { timestamp, articles } = JSON.parse(cached);
-                if (Date.now() - timestamp < CACHE_TIME) {
-                    setTop(articles);
-                    return;
-                }
-            }
-
-            try {
-                const key = import.meta.env.VITE_API_KEY;
-                const baseUrl = import.meta.env.VITE_API_URL;
-                const url = `${baseUrl}/top-headlines?category=general&lang=en&max=5&apikey=${key}`;
-
-                const response = await fetch(url);
-                const data = await response.json();
-
-                if (data.articles) {
-                    setTop(data.articles);
-                    // 2. Save to Cache
-                    localStorage.setItem(CACHE_KEY, JSON.stringify({
-                        timestamp: Date.now(),
-                        articles: data.articles
-                    }));
-                } else if (data.errors) {
-                    console.warn("API Limit reached, using old cache if available.");
-                }
-            } catch (err) {
-                console.error("Sidebar Fetch Error:", err);
-            }
-        };
-
-        fetchTrending();
-    }, []);
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data.articles) setTop(data.articles);
+        } catch (err) {
+            console.error("Sidebar Error:", err);
+        }
+    };
+    fetchTrending();
+}, []);
 
     // Static Fallback data so the UI never looks empty even if API fails
     const displayItems = top.length > 0 ? top : [
