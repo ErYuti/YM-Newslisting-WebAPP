@@ -1,0 +1,10 @@
+[[redirects]]
+  from = "/gnews-api/*"
+  to = "https://gnews.io/api/v4/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

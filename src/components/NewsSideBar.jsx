@@ -9,7 +9,6 @@ const NewsSideBar = () => {
             const CACHE_KEY = 'ym-trending-cache';
             const cached = localStorage.getItem(CACHE_KEY);
 
-            // Check Cache (30 Minutes)
             if (cached) {
                 const { timestamp, articles } = JSON.parse(cached);
                 if (Date.now() - timestamp < 30 * 60 * 1000) {
@@ -20,19 +19,21 @@ const NewsSideBar = () => {
 
             try {
                 const key = import.meta.env.VITE_API_KEY;
-                const baseUrl = import.meta.env.VITE_API_URL;
-                const PROXY = "https://corsproxy.io/?";
-                const endpoint = `${baseUrl}/top-headlines?category=general&lang=en&max=5&apikey=${key}`;
+                const baseUrl = window.location.hostname === 'localhost' 
+                    ? 'https://gnews.io/api/v4' 
+                    : '/gnews-api';
 
-                const response = await fetch(PROXY + encodeURIComponent(endpoint));
-                const data = await response.json();
+                const url = `${baseUrl}/top-headlines?category=general&lang=en&max=5&apikey=${key}`;
 
-                if (data.articles) {
-                    setTop(data.articles);
-                    localStorage.setItem(CACHE_KEY, JSON.stringify({
-                        timestamp: Date.now(),
-                        articles: data.articles
-                    }));
+                const response = await fetch(url);
+                const contentType = response.headers.get("content-type");
+                
+                if (contentType && contentType.includes("application/json")) {
+                    const data = await response.json();
+                    if (data.articles) {
+                        setTop(data.articles);
+                        localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: Date.now(), articles: data.articles }));
+                    }
                 }
             } catch (err) {
                 console.error("Sidebar Error:", err);
@@ -42,11 +43,8 @@ const NewsSideBar = () => {
         fetchTrending();
     }, []);
 
-    // Fallback data in case of API Error or Limit (100 limit reached)
     const displayData = top.length > 0 ? top : [
-        { title: "Global market trends shifting in new quarter", source: { name: "Bloomberg" }, url: "#" },
-        { title: "Advancements in AI reaching new milestones", source: { name: "TechWire" }, url: "#" },
-        { title: "Renewable energy projects gain massive funding", source: { name: "Nature" }, url: "#" }
+        { title: "Trending news is currently unavailable", source: { name: "System" }, url: "#" }
     ];
 
     return (
